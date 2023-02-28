@@ -1,0 +1,552 @@
+from tkinter import *
+import PIL.Image, PIL.ImageTk
+import math
+import random
+import pygame
+import tkinter
+from tkinter.font import Font
+import time
+import threading
+
+try:
+    import tkinter as tk
+except:
+    import tkinter as tk
+
+root = Tk()
+
+root.attributes("-fullscreen", True)
+root.title("Click speed Test")
+
+pygame.mixer.init()
+
+endt = 0
+Timer = 0
+clicks = 0
+timerdone = False
+NAME = "No Name"
+
+
+def clicksonscreen():
+    global clicks
+    clicks += 1
+    Clicksonscreen.config(text=clicks)
+    Clicksonscreen.grid(row=6, column=5)
+
+
+def closeprogram():
+    root.destroy()
+
+
+def change15():
+    global Timer
+    global endt
+    Timer = 15
+    endt = 15
+    if Timer == 15:
+        if StartButton["state"] == tk.DISABLED:
+            StartButton["state"] = tk.NORMAL
+
+
+def change30():
+    global endt
+    global Timer
+    Timer = 30
+    endt = 30
+    if Timer == 30:
+        if StartButton["state"] == tk.DISABLED:
+            StartButton["state"] = tk.NORMAL
+
+
+def MusicPlay():
+    pygame.mixer.music.load("ClickSound.mp4")
+    pygame.mixer.music.play(loops=0)
+
+
+def Main_window():
+    NewWindow = Toplevel(root)
+    NewWindow.geometry("250x250")
+    NewWindow.title(" Gamemode ")
+    NewWindow.resizable(False, False)
+    Welcomepg = Label(NewWindow, text=" Select your gamemode")
+    Welcomepg.grid()
+    sixsec = Button(
+        NewWindow,
+        text=" 30 second game",
+        command=lambda: [change30(), NewWindow.destroy(), MusicPlay()],
+    )
+    sixsec.grid()
+    thirtsec = Button(
+        NewWindow,
+        text=" 15 second game",
+        command=lambda: [change15(), NewWindow.destroy(), MusicPlay()],
+    )
+    thirtsec.grid()
+    CloseWindow = Button(
+        NewWindow, text="Close Game Select", command=lambda: NewWindow.destroy()
+    )
+    CloseWindow.grid()
+
+
+# def MyNum():
+# global code lets us reasign a variable inside a function
+# global clicks
+# clicks += 1
+# myLabel1 = Label(root, text = clicks)
+# myLabel1.grid()
+
+
+def Namechange():
+    global NAME
+    NAME = " Guest"
+
+
+def noname():
+    global NAME
+    if NAME == "No Name":
+        noNameList = [
+            "Johnathan",
+            "Lohbathan",
+            "Wohbathan",
+            "Slohbathan",
+            "Rohbathan",
+            "Johann",
+            "Guest",
+        ]
+        NAME = random.choice(noNameList)
+
+
+def Login():
+    global NAME
+    Loginwindow = Toplevel(root)
+    Loginwindow.geometry("250x250")
+    Loginwindow.title(" Login ")
+    Loginwindow.resizable(False, False)
+    Loginpg = Label(Loginwindow, text=" Login ")
+    Loginpg.pack()
+    Loginwindow.attributes("-fullscreen", True)
+    CloseLog = Button(
+        Loginwindow, text="Close Login", command=lambda: Loginwindow.destroy()
+    )
+    CloseLog.pack()
+    Name = Label(Loginwindow, text=" Enter your Name")
+    Name.pack()
+    Log = Entry(Loginwindow, width=50)
+    Log.pack()
+    playguest = Button(
+        Loginwindow,
+        text=" Play as guest",
+        command=lambda: [Namechange(), MusicPlay(), Loginwindow.destroy()],
+    )
+    playguest.pack()
+
+    def changename():
+        global NAME
+        NAME = Log.get()
+
+    setname = Button(
+        Loginwindow,
+        text=" Set Name",
+        command=lambda: [changename(), MusicPlay(), Loginwindow.destroy()],
+    )
+    setname.pack()
+
+
+def cpscount(userclicks, timechosen):
+    cps = "%.1f" % (userclicks / timechosen)
+    return cps
+
+
+def timee():
+    global endt
+    global timerdone
+    global Timer
+    while timerdone == False:
+        print(Timer)
+        if Timer > 0:
+            timeronscreen.config(text=Timer)
+            Timer -= 1
+            time.sleep(1)
+        elif Timer == 0:
+            print("end")
+            timeronscreen.config(text=" Go!!")
+        if Timer == 0:
+            timerdone = True
+            if timerdone == True:
+                global clicks
+                global tkimg
+                statswin = Toplevel(root)
+                statswin.geometry("250x250")
+                statswin.title(" Score ")
+                statswin.resizable(False, False)
+                scorespace = Label(
+                    statswin,
+                    text="                                                                                                                                               ",
+                )
+                scorespace.grid(row=1, column=4)
+                Scorepg = Label(
+                    statswin, text=" Here is how you did " + NAME, font="times 25"
+                )
+                Scorepg.grid(row=1, column=5)
+                statswin.attributes("-fullscreen", True)
+                Lastpg = Button(
+                    statswin,
+                    text="Retry",
+                    padx=20,
+                    pady=10,
+                    activebackground="red",
+                    command=lambda: [statswin.destroy(), root.destroy()],
+                )
+                Lastpg.grid(column=5, row=7)
+                Lastpg.bind("<Enter>", onbutton)
+                Lastpg.bind("<Leave>", onleft)
+                italics = Font(size=22, slant="italic")
+                # dosent work in a func needs to change size and move to stats window, change cords on grid
+                # for my image not to get garbage collected we need to make it a global variable as shown
+                if clicks >= 250 and endt == 30:
+                    global tkimg
+                    spacewin = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img = PIL.Image.open("Chee.png")
+                    tkimg = PIL.ImageTk.PhotoImage(img)
+                    image = spacewin.create_image(170, 110, image=tkimg)
+                    spacewin.grid(row=4, column=5)
+                    fastspaces = Label(
+                        statswin, text="                                            "
+                    )
+                    fastspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are a Cheetah, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 22",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingF = Label(
+                        statswin,
+                        text=" 'As fast as a Cheetah, Congrats!'",
+                        font=italics,
+                    )
+                    sayingF.grid(row=6, column=5)
+                if clicks >= 0 and clicks < 85 and endt == 15:
+                    global tkimgslow
+                    spacewinslow = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img2 = PIL.Image.open("slug.jpg")
+                    img2.resize((355, 227))
+                    tkimgslow = PIL.ImageTk.PhotoImage(img2)
+                    image2 = spacewinslow.create_image(170, 110, image=tkimgslow)
+                    spacewinslow.grid(row=4, column=5)
+                    slowspaces = Label(
+                        statswin, text="                                           "
+                    )
+                    slowspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are a Slug, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 25",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingS = Label(
+                        statswin,
+                        text=' "Slow and steady doesn\'t always win the race"',
+                        font=italics,
+                    )
+                    sayingS.grid(row=6, column=5)
+                if clicks >= 165 and clicks < 250 and endt == 15:
+                    global tkimgsmed
+                    spacewinsmed = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img3 = PIL.Image.open("eagle.png")
+                    img3.resize((355, 227))
+                    tkimgsmed = PIL.ImageTk.PhotoImage(img3)
+                    image3 = spacewinsmed.create_image(170, 110, image=tkimgsmed)
+                    spacewinsmed.grid(row=4, column=5)
+                    medspaces = Label(
+                        statswin, text="                                           "
+                    )
+                    medspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are an Eagle, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 22",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingM = Label(
+                        statswin,
+                        text=' "Not the SLowest, But not the fastest either!"',
+                        font=italics,
+                    )
+                    sayingM.grid(row=6, column=5)
+                if clicks >= 80 and clicks < 165 and endt == 15:
+                    global tkimgsinter
+                    spacewinsinter = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img4 = PIL.Image.open("Octo.png")
+                    img4.resize((355, 400))
+                    tkimgsinter = PIL.ImageTk.PhotoImage(img4)
+                    image4 = spacewinsinter.create_image(170, 110, image=tkimgsinter)
+                    spacewinsinter.grid(row=4, column=5)
+                    interspaces = Label(
+                        statswin, text="                                           "
+                    )
+                    interspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are an Octopus, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 22",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingM = Label(
+                        statswin,
+                        text=' "Not the Slowest, but not the fastest either!"',
+                        font=italics,
+                    )
+                    sayingM.grid(row=6, column=5)
+                if clicks >= 510 and endt == 30:
+                    global tkimg2
+                    spacewin = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img = PIL.Image.open("Chee.png")
+                    tkimg2 = PIL.ImageTk.PhotoImage(img)
+                    image = spacewin.create_image(170, 110, image=tkimg2)
+                    spacewin.grid(row=4, column=5)
+                    fastspaces = Label(
+                        statswin, text="                                            "
+                    )
+                    fastspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are a Cheetah, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 22",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingF = Label(
+                        statswin,
+                        text=" 'As fast as a Cheetah, Congrats!'",
+                        font=italics,
+                    )
+                    sayingF.grid(row=6, column=5)
+                if clicks >= 0 and clicks < 170 and endt == 30:
+                    global tkimgslow2
+                    spacewinslow = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img2 = PIL.Image.open("slug.jpg")
+                    img2.resize((355, 227))
+                    tkimgslow2 = PIL.ImageTk.PhotoImage(img2)
+                    image2 = spacewinslow.create_image(170, 110, image=tkimgslow2)
+                    spacewinslow.grid(row=4, column=5)
+                    slowspaces = Label(
+                        statswin, text="                                           "
+                    )
+                    slowspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are a Slug, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 25",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingS = Label(
+                        statswin,
+                        text=' "Slow and steady doesn\'t always win the race"',
+                        font=italics,
+                    )
+                    sayingS.grid(row=6, column=5)
+                if clicks >= 340 and clicks < 510 and endt == 30:
+                    global tkimgsmed2
+                    spacewinsmed = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img3 = PIL.Image.open("eagle.png")
+                    img3.resize((355, 227))
+                    tkimgsmed2 = PIL.ImageTk.PhotoImage(img3)
+                    image3 = spacewinsmed.create_image(170, 110, image=tkimgsmed2)
+                    spacewinsmed.grid(row=4, column=5)
+                    medspaces = Label(
+                        statswin, text="                                           "
+                    )
+                    medspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are an Eagle, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 22",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingM = Label(
+                        statswin,
+                        text=' "Not the slowest, but not the fastest either!"',
+                        font=italics,
+                    )
+                    sayingM.grid(row=6, column=5)
+                if clicks >= 170 and clicks < 340 and endt == 30:
+                    global tkimgsinter2
+                    spacewinsinter = tkinter.Canvas(
+                        statswin, bg="white", height=220, width=340
+                    )
+                    img4 = PIL.Image.open("Octo.png")
+                    img4.resize((355, 400))
+                    tkimgsinter2 = PIL.ImageTk.PhotoImage(img4)
+                    image4 = spacewinsinter.create_image(170, 110, image=tkimgsinter2)
+                    spacewinsinter.grid(row=4, column=5)
+                    interspaces = Label(
+                        statswin, text="                                           "
+                    )
+                    interspaces.grid(row=5, column=4)
+                    staslabel = Label(
+                        statswin,
+                        text=" You are an Octopus, you got "
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
+                        font="times 22",
+                    )
+                    staslabel.grid(row=5, column=5)
+                    sayingM = Label(
+                        statswin,
+                        text=' "Not the Slowest, But not the fastest either!"',
+                        font=italics,
+                    )
+                    sayingM.grid(row=6, column=5)
+
+
+def gamemodestop():
+    if Welcomewind["state"] == tk.NORMAL:
+        Welcomewind["state"] = tk.DISABLED
+
+
+def buttonchange():
+    # changes the button state whenever the player hits start
+    if myspacebar["state"] == tk.DISABLED:
+        myspacebar["state"] = tk.NORMAL
+
+
+def clicktostartstop():
+    if StartButton["state"] == tk.NORMAL:
+        StartButton["state"] = tk.DISABLED
+
+
+# this class turns the button green when hovering over it the way it works is binding it whenever it leaves or enters and then changes the color
+
+
+def onbutton(e):
+    programclose["bg"] = "red"
+
+
+def onleft(e):
+    programclose["bg"] = "SystemButtonFace"
+
+
+def onbuttonclick(e):
+    myspacebar["bg"] = "green"
+
+
+def onleftclick(e):
+    myspacebar["bg"] = "SystemButtonFace"
+
+
+clickframe = LabelFrame(root, text=" Clicks", padx=12, pady=12)
+clickframe.grid(padx=5, pady=5, row=6, column=5)
+
+timerframe = LabelFrame(root, text="Time left", padx=15, pady=15)
+timerframe.grid(padx=5, pady=5, row=4, column=5)
+
+# actual button
+myspacebar = Button(
+    root,
+    text=" LeftClick ",
+    padx=150,
+    pady=150,
+    command=lambda: [clicksonscreen()],
+    state=DISABLED,
+    activebackground="green",
+)
+StartButton = Button(
+    root,
+    text=" Click to Start ",
+    padx=141,
+    pady=141,
+    command=lambda: [
+        threading.Thread(target=timee).start(),
+        MusicPlay(),
+        buttonchange(),
+        gamemodestop(),
+        noname(),
+        clicktostartstop(),
+    ],
+    state=DISABLED,
+    activebackground="green",
+)
+Welcomewind = Button(
+    root,
+    text=" click to select game mode",
+    padx=35,
+    pady=35,
+    command=lambda: [Main_window(), MusicPlay()],
+    activebackground="green",
+)
+programclose = Button(
+    root, text=" Exit program", command=closeprogram, activebackground="red"
+)
+Loginpage = Button(
+    root,
+    text=" Login",
+    padx=15,
+    pady=15,
+    command=lambda: [Login(), MusicPlay()],
+    activebackground="green",
+)
+
+Columnspace = Label(
+    root,
+    text="                                                                           ",
+)
+RowSpaces = Label(root, text="                      ")
+
+gamemodespace = Label(root, text="         ")
+timeronscreen = Label(timerframe, font="times 40")
+Clicksonscreen = Label(clickframe, font="times 40")
+timerstartspace = Label(root, text="                                            ")
+exitspaces = Label(
+    root,
+    text="                                                                                               ",
+)
+
+# binding all buttons so when they leave or enter
+programclose.bind("<Enter>", onbutton)
+programclose.bind("<Leave>", onleft)
+myspacebar.bind("<Enter>", onbuttonclick)
+myspacebar.bind("<Leave>", onleftclick)
+
+# locates the button
+myspacebar.grid(row=6, column=3)
+StartButton.grid(row=4, column=3)
+Columnspace.grid(row=1, column=1)
+RowSpaces.grid(row=5, column=1)
+Welcomewind.grid(row=5, column=8)
+gamemodespace.grid(column=7, row=5)
+timerstartspace.grid(row=4, column=4)
+timeronscreen.grid(row=4, column=5)
+programclose.grid(row=3, column=13)
+exitspaces.grid(column=12)
+Loginpage.grid(row=5, column=5)
+
+# runs program
+root.mainloop()
