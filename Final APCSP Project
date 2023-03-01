@@ -24,12 +24,14 @@ endt = 0
 Timer = 0
 clicks = 0
 timerdone = False
+gameStart = False
 NAME = "No Name"
 
 
 def clicksonscreen():
     global clicks
     clicks += 1
+    gameStart = TRUE
     Clicksonscreen.config(text=clicks)
     Clicksonscreen.grid(row=6, column=5)
 
@@ -88,17 +90,9 @@ def Main_window():
     CloseWindow.grid()
 
 
-# def MyNum():
-# global code lets us reasign a variable inside a function
-# global clicks
-# clicks += 1
-# myLabel1 = Label(root, text = clicks)
-# myLabel1.grid()
-
-
 def Namechange():
     global NAME
-    NAME = " Guest"
+    NAME = "Guest"
 
 
 def noname():
@@ -203,7 +197,7 @@ def timee():
                 italics = Font(size=22, slant="italic")
                 # dosent work in a func needs to change size and move to stats window, change cords on grid
                 # for my image not to get garbage collected we need to make it a global variable as shown
-                if clicks >= 250 and endt == 30:
+                if float(cpscount(clicks, endt)) >= 10 and endt == 15:
                     global tkimg
                     spacewin = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -230,7 +224,11 @@ def timee():
                         font=italics,
                     )
                     sayingF.grid(row=6, column=5)
-                if clicks >= 0 and clicks < 85 and endt == 15:
+                if (
+                    float(cpscount(clicks, endt)) >= 0
+                    and float(cpscount(clicks, endt)) < 6
+                    and endt == 15
+                ):
                     global tkimgslow
                     spacewinslow = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -258,7 +256,11 @@ def timee():
                         font=italics,
                     )
                     sayingS.grid(row=6, column=5)
-                if clicks >= 165 and clicks < 250 and endt == 15:
+                if (
+                    float(cpscount(clicks, endt)) >= 8
+                    and float(cpscount(clicks, endt)) < 10
+                    and endt == 15
+                ):
                     global tkimgsmed
                     spacewinsmed = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -282,11 +284,15 @@ def timee():
                     staslabel.grid(row=5, column=5)
                     sayingM = Label(
                         statswin,
-                        text=' "Not the SLowest, But not the fastest either!"',
+                        text=' "Not the Slowest, but not the fastest either!"',
                         font=italics,
                     )
                     sayingM.grid(row=6, column=5)
-                if clicks >= 80 and clicks < 165 and endt == 15:
+                if (
+                    float(cpscount(clicks, endt)) >= 6
+                    and float(cpscount(clicks, endt)) < 8
+                    and endt == 15
+                ):
                     global tkimgsinter
                     spacewinsinter = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -314,7 +320,7 @@ def timee():
                         font=italics,
                     )
                     sayingM.grid(row=6, column=5)
-                if clicks >= 510 and endt == 30:
+                if float(cpscount(clicks, endt)) >= 10 and endt == 30:
                     global tkimg2
                     spacewin = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -341,7 +347,11 @@ def timee():
                         font=italics,
                     )
                     sayingF.grid(row=6, column=5)
-                if clicks >= 0 and clicks < 170 and endt == 30:
+                if (
+                    float(cpscount(clicks, endt)) >= 0
+                    and float(cpscount(clicks, endt)) < 6
+                    and endt == 30
+                ):
                     global tkimgslow2
                     spacewinslow = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -369,7 +379,11 @@ def timee():
                         font=italics,
                     )
                     sayingS.grid(row=6, column=5)
-                if clicks >= 340 and clicks < 510 and endt == 30:
+                if (
+                    float(cpscount(clicks, endt)) >= 8
+                    and float(cpscount(clicks, endt)) < 10
+                    and endt == 30
+                ):
                     global tkimgsmed2
                     spacewinsmed = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -397,7 +411,11 @@ def timee():
                         font=italics,
                     )
                     sayingM.grid(row=6, column=5)
-                if clicks >= 170 and clicks < 340 and endt == 30:
+                if (
+                    float(cpscount(clicks, endt)) >= 6
+                    and float(cpscount(clicks, endt)) < 8
+                    and endt == 30
+                ):
                     global tkimgsinter2
                     spacewinsinter = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
