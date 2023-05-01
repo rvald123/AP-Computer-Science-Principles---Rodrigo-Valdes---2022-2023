@@ -1,5 +1,7 @@
 from tkinter import *
 import PIL.Image, PIL.ImageTk
+import math
+import random
 import pygame
 import tkinter
 from tkinter.font import Font
@@ -22,12 +24,14 @@ endt = 0
 Timer = 0
 clicks = 0
 timerdone = False
+gameStart = False
 NAME = "No Name"
 
 
 def clicksonscreen():
     global clicks
     clicks += 1
+    gameStart = TRUE
     Clicksonscreen.config(text=clicks)
     Clicksonscreen.grid(row=6, column=5)
 
@@ -36,22 +40,22 @@ def closeprogram():
     root.destroy()
 
 
-def change30():
+def change15():
     global Timer
     global endt
-    Timer = 30
-    endt = 30
-    if Timer == 30:
+    Timer = 15
+    endt = 15
+    if Timer == 15:
         if StartButton["state"] == tk.DISABLED:
             StartButton["state"] = tk.NORMAL
 
 
-def change60():
+def change30():
     global endt
     global Timer
-    Timer = 60
-    endt = 60
-    if Timer == 60:
+    Timer = 30
+    endt = 30
+    if Timer == 30:
         if StartButton["state"] == tk.DISABLED:
             StartButton["state"] = tk.NORMAL
 
@@ -70,14 +74,14 @@ def Main_window():
     Welcomepg.grid()
     sixsec = Button(
         NewWindow,
-        text=" 60 second game",
-        command=lambda: [change60(), NewWindow.destroy(), MusicPlay()],
+        text=" 30 second game",
+        command=lambda: [change30(), NewWindow.destroy(), MusicPlay()],
     )
     sixsec.grid()
     thirtsec = Button(
         NewWindow,
-        text=" 30 second game",
-        command=lambda: [change30(), NewWindow.destroy(), MusicPlay()],
+        text=" 15 second game",
+        command=lambda: [change15(), NewWindow.destroy(), MusicPlay()],
     )
     thirtsec.grid()
     CloseWindow = Button(
@@ -86,23 +90,24 @@ def Main_window():
     CloseWindow.grid()
 
 
-# def MyNum():
-# global code lets us reasign a variable inside a function
-# global clicks
-# clicks += 1
-# myLabel1 = Label(root, text = clicks)
-# myLabel1.grid()
-
-
 def Namechange():
     global NAME
-    NAME = " Guest"
+    NAME = "Guest"
 
 
 def noname():
     global NAME
     if NAME == "No Name":
-        NAME = "Guest"
+        noNameList = [
+            "Johnathan",
+            "Lohbathan",
+            "Wohbathan",
+            "Slohbathan",
+            "Rohbathan",
+            "Johann",
+            "Guest",
+        ]
+        NAME = random.choice(noNameList)
 
 
 def Login():
@@ -125,7 +130,7 @@ def Login():
     playguest = Button(
         Loginwindow,
         text=" Play as guest",
-        command=[Namechange(), MusicPlay(), Loginwindow.destroy()],
+        command=lambda: [Namechange(), MusicPlay(), Loginwindow.destroy()],
     )
     playguest.pack()
 
@@ -139,6 +144,11 @@ def Login():
         command=lambda: [changename(), MusicPlay(), Loginwindow.destroy()],
     )
     setname.pack()
+
+
+def cpscount(userclicks, timechosen):
+    cps = "%.1f" % (userclicks / timechosen)
+    return cps
 
 
 def timee():
@@ -187,7 +197,7 @@ def timee():
                 italics = Font(size=22, slant="italic")
                 # dosent work in a func needs to change size and move to stats window, change cords on grid
                 # for my image not to get garbage collected we need to make it a global variable as shown
-                if clicks >= 250 and endt == 30:
+                if float(cpscount(clicks, endt)) >= 10 and endt == 15:
                     global tkimg
                     spacewin = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -203,10 +213,8 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are a Cheetah, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 22",
                     )
                     staslabel.grid(row=5, column=5)
@@ -216,13 +224,17 @@ def timee():
                         font=italics,
                     )
                     sayingF.grid(row=6, column=5)
-                if clicks >= 0 and clicks < 85 and endt == 30:
+                if (
+                    float(cpscount(clicks, endt)) >= 0
+                    and float(cpscount(clicks, endt)) < 6
+                    and endt == 15
+                ):
                     global tkimgslow
                     spacewinslow = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
                     )
                     img2 = PIL.Image.open("slug.jpg")
-                    img2.resize((355, 227), Image.ANTIALIAS)
+                    img2.resize((355, 227))
                     tkimgslow = PIL.ImageTk.PhotoImage(img2)
                     image2 = spacewinslow.create_image(170, 110, image=tkimgslow)
                     spacewinslow.grid(row=4, column=5)
@@ -233,26 +245,28 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are a Slug, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 25",
                     )
                     staslabel.grid(row=5, column=5)
                     sayingS = Label(
                         statswin,
-                        text=' "Slow and Steady Dosen\'t always win the Race"',
+                        text=' "Slow and steady doesn\'t always win the race"',
                         font=italics,
                     )
                     sayingS.grid(row=6, column=5)
-                if clicks >= 165 and clicks < 250 and endt == 30:
+                if (
+                    float(cpscount(clicks, endt)) >= 8
+                    and float(cpscount(clicks, endt)) < 10
+                    and endt == 15
+                ):
                     global tkimgsmed
                     spacewinsmed = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
                     )
                     img3 = PIL.Image.open("eagle.png")
-                    img3.resize((355, 227), Image.ANTIALIAS)
+                    img3.resize((355, 227))
                     tkimgsmed = PIL.ImageTk.PhotoImage(img3)
                     image3 = spacewinsmed.create_image(170, 110, image=tkimgsmed)
                     spacewinsmed.grid(row=4, column=5)
@@ -263,26 +277,28 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are an Eagle, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 22",
                     )
                     staslabel.grid(row=5, column=5)
                     sayingM = Label(
                         statswin,
-                        text=' "Not the SLowest, But not the fastest either!"',
+                        text=' "Not the Slowest, but not the fastest either!"',
                         font=italics,
                     )
                     sayingM.grid(row=6, column=5)
-                if clicks >= 80 and clicks < 165 and endt == 30:
+                if (
+                    float(cpscount(clicks, endt)) >= 6
+                    and float(cpscount(clicks, endt)) < 8
+                    and endt == 15
+                ):
                     global tkimgsinter
                     spacewinsinter = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
                     )
                     img4 = PIL.Image.open("Octo.png")
-                    img4.resize((355, 400), Image.ANTIALIAS)
+                    img4.resize((355, 400))
                     tkimgsinter = PIL.ImageTk.PhotoImage(img4)
                     image4 = spacewinsinter.create_image(170, 110, image=tkimgsinter)
                     spacewinsinter.grid(row=4, column=5)
@@ -293,20 +309,18 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are an Octopus, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 22",
                     )
                     staslabel.grid(row=5, column=5)
                     sayingM = Label(
                         statswin,
-                        text=' "Not the Slowest, But not the fastest either!"',
+                        text=' "Not the Slowest, but not the fastest either!"',
                         font=italics,
                     )
                     sayingM.grid(row=6, column=5)
-                if clicks >= 510 and endt == 60:
+                if float(cpscount(clicks, endt)) >= 10 and endt == 30:
                     global tkimg2
                     spacewin = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
@@ -322,10 +336,8 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are a Cheetah, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 22",
                     )
                     staslabel.grid(row=5, column=5)
@@ -335,13 +347,17 @@ def timee():
                         font=italics,
                     )
                     sayingF.grid(row=6, column=5)
-                if clicks >= 0 and clicks < 170 and endt == 60:
+                if (
+                    float(cpscount(clicks, endt)) >= 0
+                    and float(cpscount(clicks, endt)) < 6
+                    and endt == 30
+                ):
                     global tkimgslow2
                     spacewinslow = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
                     )
                     img2 = PIL.Image.open("slug.jpg")
-                    img2.resize((355, 227), Image.ANTIALIAS)
+                    img2.resize((355, 227))
                     tkimgslow2 = PIL.ImageTk.PhotoImage(img2)
                     image2 = spacewinslow.create_image(170, 110, image=tkimgslow2)
                     spacewinslow.grid(row=4, column=5)
@@ -352,26 +368,28 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are a Slug, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 25",
                     )
                     staslabel.grid(row=5, column=5)
                     sayingS = Label(
                         statswin,
-                        text=' "Slow and Steady Dosen\'t always win the Race"',
+                        text=' "Slow and steady doesn\'t always win the race"',
                         font=italics,
                     )
                     sayingS.grid(row=6, column=5)
-                if clicks >= 340 and clicks < 510 and endt == 60:
+                if (
+                    float(cpscount(clicks, endt)) >= 8
+                    and float(cpscount(clicks, endt)) < 10
+                    and endt == 30
+                ):
                     global tkimgsmed2
                     spacewinsmed = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
                     )
                     img3 = PIL.Image.open("eagle.png")
-                    img3.resize((355, 227), Image.ANTIALIAS)
+                    img3.resize((355, 227))
                     tkimgsmed2 = PIL.ImageTk.PhotoImage(img3)
                     image3 = spacewinsmed.create_image(170, 110, image=tkimgsmed2)
                     spacewinsmed.grid(row=4, column=5)
@@ -382,26 +400,28 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are an Eagle, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 22",
                     )
                     staslabel.grid(row=5, column=5)
                     sayingM = Label(
                         statswin,
-                        text=' "Not the SLowest, But not the fastest either!"',
+                        text=' "Not the slowest, but not the fastest either!"',
                         font=italics,
                     )
                     sayingM.grid(row=6, column=5)
-                if clicks >= 170 and clicks < 340 and endt == 60:
+                if (
+                    float(cpscount(clicks, endt)) >= 6
+                    and float(cpscount(clicks, endt)) < 8
+                    and endt == 30
+                ):
                     global tkimgsinter2
                     spacewinsinter = tkinter.Canvas(
                         statswin, bg="white", height=220, width=340
                     )
                     img4 = PIL.Image.open("Octo.png")
-                    img4.resize((355, 400), Image.ANTIALIAS)
+                    img4.resize((355, 400))
                     tkimgsinter2 = PIL.ImageTk.PhotoImage(img4)
                     image4 = spacewinsinter.create_image(170, 110, image=tkimgsinter2)
                     spacewinsinter.grid(row=4, column=5)
@@ -412,10 +432,8 @@ def timee():
                     staslabel = Label(
                         statswin,
                         text=" You are an Octopus, you got "
-                        + str(clicks)
-                        + " Clicks in "
-                        + str(endt)
-                        + " Seconds",
+                        + str(cpscount(clicks, endt))
+                        + " Clicks Per Second ",
                         font="times 22",
                     )
                     staslabel.grid(row=5, column=5)
